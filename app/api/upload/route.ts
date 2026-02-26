@@ -10,22 +10,33 @@ export async function POST(request: NextRequest) {
     }
 
     const supabase = await createClient()
-    const ext = file.name.split(".").pop()
-    const fileName = `${Date.now()}-${Math.random().toString(36).substring(2)}.${ext}`
+
+    const ext = file.name.split(".").pop()?.toLowerCase() || "jpg"
+    const fileName = `${Date.now()}-${Math.random().toString(36).substring(2, 10)}.${ext}`
     const filePath = `uploads/${fileName}`
 
-    const { error } = await supabase.storage
-      .from("images")
-      .upload(filePath, file, { contentType: file.type, upsert: false })
+    // Convert file to ArrayBuffer then to Buffer for reliable upload
+    const arrayBuffer = await file.arrayBuffer()
+    const buffer = Buffer.from(arrayBuffer)
 
-    if (error) {
-      return NextResponse.json({ error: error.message }, { status: 500 })
+    const { error: uploadError } = await supabase.storage
+      .from("images")
+      .upload(filePath, buffer, {
+        contentType: file.type,
+        upsert: false,
+      })
+
+    if (uploadError) {
+      console.log("[v0] Upload error:", uploadError.message)
+      return NextResponse.json({ error: uploadError.message }, { status: 500 })
     }
 
     const { data: urlData } = supabase.storage.from("images").getPublicUrl(filePath)
 
+    console.log("[v0] Upload success, URL:", urlData.publicUrl)
     return NextResponse.json({ url: urlData.publicUrl })
-  } catch {
+  } catch (err) {
+    console.log("[v0] Upload catch error:", err)
     return NextResponse.json({ error: "Erro ao fazer upload" }, { status: 500 })
   }
 }
