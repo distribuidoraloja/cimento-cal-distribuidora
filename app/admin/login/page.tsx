@@ -27,7 +27,7 @@ export default function AdminLoginPage() {
         setError(data.error || "Erro ao fazer login")
         return
       }
-      router.push("/admin")
+      window.location.href = "/admin"
     } catch {
       setError("Erro de conexao")
     } finally {

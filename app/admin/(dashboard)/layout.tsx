@@ -25,19 +25,25 @@ export default function AdminDashboardLayout({ children }: { children: React.Rea
   const pathname = usePathname()
 
   useEffect(() => {
-    fetch("/api/admin/login", { method: "GET" }).catch(() => null)
-    // Check cookie presence
-    if (document.cookie.includes("admin_session")) {
-      setIsAdmin(true)
-    } else {
-      router.push("/admin/login")
+    async function checkSession() {
+      try {
+        const res = await fetch("/api/admin/verify")
+        if (res.ok) {
+          setIsAdmin(true)
+        } else {
+          router.push("/admin/login")
+        }
+      } catch {
+        router.push("/admin/login")
+      }
     }
+    checkSession()
   }, [router])
 
   async function handleLogout() {
     await fetch("/api/admin/logout", { method: "POST" })
     document.cookie = "admin_session=; Max-Age=0; path=/"
-    router.push("/admin/login")
+    window.location.href = "/admin/login"
   }
 
   if (!isAdmin) {
