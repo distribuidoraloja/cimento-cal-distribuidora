@@ -19,20 +19,20 @@ export default function Icon() {
       >
         <div
           style={{
-            display: "grid",
-            gridTemplateColumns: "1fr 1fr",
+            display: "flex",
+            flexWrap: "wrap",
             gap: 3,
             width: 20,
             height: 20,
           }}
         >
-          <div style={{ background: "#ea580c", borderRadius: 2 }} />
-          <div style={{ background: "#ea580c", borderRadius: 2 }} />
-          <div style={{ background: "#ea580c", borderRadius: 2 }} />
-          <div style={{ background: "#ea580c", borderRadius: 2 }} />
+          <div style={{ width: 8, height: 8, background: "#ea580c", borderRadius: 2 }} />
+          <div style={{ width: 8, height: 8, background: "#ea580c", borderRadius: 2 }} />
+          <div style={{ width: 8, height: 8, background: "#ea580c", borderRadius: 2 }} />
+          <div style={{ width: 8, height: 8, background: "#ea580c", borderRadius: 2 }} />
         </div>
       </div>
     ),
-    { ...size },
+    { ...size }
   )
 }
