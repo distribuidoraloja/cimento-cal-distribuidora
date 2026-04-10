@@ -6,13 +6,14 @@ import Link from "next/link"
 import {
   LayoutDashboard, Package, FolderTree, Layers, ShoppingCart,
   Star, Image as ImageIcon, LogOut, Menu, X, ChevronRight,
-  MessageCircle, BarChart3, ExternalLink
+  MessageCircle, BarChart3, ExternalLink, PieChart,
 } from "lucide-react"
 
 const menuItems = [
   { label: "Dashboard", href: "/admin", icon: LayoutDashboard },
   { label: "Pedidos", href: "/admin/pedidos", icon: ShoppingCart },
   { label: "WhatsApp", href: "/admin/whatsapp", icon: MessageCircle },
+  { label: "Analytics WA", href: "/admin/analytics-whatsapp", icon: PieChart },
   { label: "Analytics", href: "/admin/analytics", icon: BarChart3 },
   { label: "Categorias", href: "/admin/categorias", icon: FolderTree },
   { label: "Subcategorias", href: "/admin/subcategorias", icon: Layers },

@@ -6,7 +6,9 @@ export default function StoreLayout({ children }: { children: React.ReactNode })
   return (
     <div className="flex flex-col min-h-screen">
       <StoreHeader />
-      <main className="flex-1">{children}</main>
+      <main className="flex-1 pt-[8.75rem] md:pt-[7.5rem] lg:pt-[10rem]">
+        {children}
+      </main>
       <StoreFooter />
       <WhatsAppChat />
     </div>

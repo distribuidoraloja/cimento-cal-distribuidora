@@ -7,9 +7,9 @@ import { BarChart3, ShoppingCart, Users, Package, DollarSign, Eye, MessageCircle
 const supabase = createClient()
 
 const fetchStats = async () => {
-  const [orders, customers, products, reviews, clicks] = await Promise.all([
+  const [orders, profiles, products, reviews, clicks] = await Promise.all([
     supabase.from("orders").select("id, total, status, created_at"),
-    supabase.from("customers").select("id, created_at"),
+    supabase.from("profiles").select("id, created_at"),
     supabase.from("products").select("id, active"),
     supabase.from("reviews").select("id, approved"),
     supabase.from("whatsapp_clicks").select("id, source, created_at"),
@@ -17,7 +17,7 @@ const fetchStats = async () => {
 
   const totalOrders = orders.data?.length || 0
   const totalRevenue = orders.data?.reduce((sum, o) => sum + Number(o.total || 0), 0) || 0
-  const totalCustomers = customers.data?.length || 0
+  const totalCustomers = profiles.data?.length || 0
   const totalProducts = products.data?.filter((p) => p.active)?.length || 0
   const totalReviews = reviews.data?.length || 0
   const approvedReviews = reviews.data?.filter((r) => r.approved)?.length || 0

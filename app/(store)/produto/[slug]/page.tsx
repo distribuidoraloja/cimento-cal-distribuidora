@@ -8,6 +8,8 @@ import { ShoppingCart, Minus, Plus, Package, Star, ChevronRight, Truck, ShieldCh
 import { addToCart } from "@/components/store/product-card"
 import Link from "next/link"
 import { toast } from "sonner"
+import { waLink } from "@/lib/site-config"
+import { trackWhatsAppClick } from "@/lib/track-whatsapp"
 
 const supabase = createClient()
 
@@ -156,9 +158,13 @@ export default function ProductPage({ params }: { params: Promise<{ slug: string
               <ShoppingCart className="w-5 h-5" /> Adicionar ao Carrinho
             </button>
             <a
-              href={`https://wa.me/5516996447972?text=${encodeURIComponent(`Ola! Tenho interesse no produto: ${product.name} - R$ ${Number(product.price).toFixed(2)}`)}`}
-              target="_blank" rel="noopener noreferrer"
-              className="px-6 py-4 bg-[#25d366] text-white rounded-xl font-bold hover:bg-[#20c15c] transition shadow-lg shadow-[#25d366]/20"
+              href={waLink(
+                `Olá! Tenho interesse no produto: ${product.name} — R$ ${Number(product.price).toFixed(2)}`,
+              )}
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={() => trackWhatsAppClick("product_page", `/produto/${product.slug}`)}
+              className="px-6 py-4 bg-[#25d366] text-white rounded-xl font-bold hover:bg-[#20c15c] transition shadow-lg shadow-[#25d366]/20 min-h-[52px] flex items-center justify-center"
             >
               WhatsApp
             </a>

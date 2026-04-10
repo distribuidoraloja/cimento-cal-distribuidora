@@ -1,22 +1,26 @@
-import { createClient } from "@/lib/supabase/server"
-import { NextRequest, NextResponse } from "next/server"
+import { createRouteHandlerSupabase } from "@/lib/supabase/route-handler"
+import { NextRequest } from "next/server"
 
 export async function POST(request: NextRequest) {
   try {
     const { email, password } = await request.json()
     if (!email || !password) {
-      return NextResponse.json({ error: "Email e senha obrigatorios" }, { status: 400 })
+      return Response.json({ error: "Email e senha obrigatorios" }, { status: 400 })
     }
 
-    const supabase = await createClient()
+    const { supabase, jsonWithSession } = createRouteHandlerSupabase(request)
     const { data, error } = await supabase.auth.signInWithPassword({ email, password })
 
     if (error) {
-      return NextResponse.json({ error: "Credenciais invalidas" }, { status: 401 })
+      return Response.json({ error: "Credenciais invalidas" }, { status: 401 })
     }
 
-    return NextResponse.json({ success: true, user: data.user })
+    return jsonWithSession({
+      success: true,
+      user: data.user,
+      session: data.session,
+    })
   } catch {
-    return NextResponse.json({ error: "Erro interno" }, { status: 500 })
+    return Response.json({ error: "Erro interno" }, { status: 500 })
   }
 }

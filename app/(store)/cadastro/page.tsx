@@ -46,6 +46,7 @@ export default function RegisterPage() {
       const res = await fetch("/api/auth/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
+        credentials: "same-origin",
         body: JSON.stringify({
           name: form.name,
           email: form.email,
@@ -57,11 +58,34 @@ export default function RegisterPage() {
       const data = await res.json()
       if (!res.ok) { toast.error(data.error || "Erro ao cadastrar"); return }
 
-      // Login automatico apos cadastro
       const supabase = createClient()
-      await supabase.auth.signInWithPassword({ email: form.email, password: form.password })
+
+      if (data.session?.access_token && data.session?.refresh_token) {
+        const { error: sessionErr } = await supabase.auth.setSession({
+          access_token: data.session.access_token,
+          refresh_token: data.session.refresh_token,
+        })
+        if (sessionErr) {
+          toast.error(sessionErr.message)
+          return
+        }
+      } else if (data.needsEmailConfirmation) {
+        toast.info("Confirme seu e-mail para ativar a conta. Depois, faça login.")
+        router.push("/login")
+        return
+      } else {
+        const { error: signInErr } = await supabase.auth.signInWithPassword({
+          email: form.email,
+          password: form.password,
+        })
+        if (signInErr) {
+          toast.error(signInErr.message)
+          return
+        }
+      }
 
       toast.success("Cadastro realizado com sucesso!")
+      router.refresh()
       router.push("/")
     } catch {
       toast.error("Erro de conexao")

@@ -2,17 +2,17 @@
 
 import { useState } from "react"
 import { X, Send, MessageCircle } from "lucide-react"
-
-const PHONE = "5516996447972"
+import { SITE, waLink } from "@/lib/site-config"
+import { trackWhatsAppClick } from "@/lib/track-whatsapp"
 
 export default function WhatsAppChat() {
   const [open, setOpen] = useState(false)
   const [message, setMessage] = useState("")
 
   function sendMessage() {
-    const text = message.trim() || "Ola! Gostaria de mais informacoes."
-    const url = `https://wa.me/${PHONE}?text=${encodeURIComponent(text)}`
-    window.open(url, "_blank")
+    const text = message.trim() || "Olá! Gostaria de mais informações."
+    trackWhatsAppClick("floating_button")
+    window.open(waLink(text), "_blank", "noopener,noreferrer")
     setMessage("")
     setOpen(false)
   }
@@ -28,7 +28,7 @@ export default function WhatsAppChat() {
               <MessageCircle className="w-5 h-5" />
             </div>
             <div className="flex-1">
-              <p className="font-semibold text-sm">Atacado Cimento & Cal</p>
+              <p className="font-semibold text-sm">{SITE.legalName}</p>
               <p className="text-xs text-white/70">Online agora</p>
             </div>
             <button onClick={() => setOpen(false)} className="text-white/70 hover:text-white transition">
@@ -39,12 +39,12 @@ export default function WhatsAppChat() {
           {/* Messages area */}
           <div className="p-4 bg-[#ece5dd] min-h-[180px]">
             <div className="bg-white rounded-lg p-3 shadow-sm max-w-[85%] mb-3">
-              <p className="text-sm text-gray-800">Ola! Bem-vindo ao Atacado Cimento & Cal.</p>
-              <p className="text-sm text-gray-800 mt-1">Como posso ajudar voce hoje?</p>
+              <p className="text-sm text-gray-800">Olá! Bem-vindo à {SITE.shortName}.</p>
+              <p className="text-sm text-gray-800 mt-1">Como podemos ajudar hoje?</p>
               <p className="text-[10px] text-gray-400 mt-1 text-right">Agora</p>
             </div>
             <div className="space-y-2">
-              {["Quero fazer um orcamento", "Duvida sobre produtos", "Informacoes de entrega"].map((q) => (
+              {["Quero fazer um orçamento", "Dúvida sobre produtos", "Informações de entrega"].map((q) => (
                 <button
                   key={q}
                   onClick={() => setMessage(q)}
@@ -79,7 +79,7 @@ export default function WhatsAppChat() {
       {/* FAB */}
       <button
         onClick={() => setOpen(!open)}
-        className="w-14 h-14 bg-[#25d366] rounded-full flex items-center justify-center text-white shadow-lg hover:bg-[#20c15c] transition hover:scale-110"
+        className="w-14 h-14 bg-[#25d366] rounded-full flex items-center justify-center text-white shadow-lg hover:bg-[#20c15c] transition hover:scale-[1.03]"
         aria-label="Abrir WhatsApp"
       >
         {open ? <X className="w-6 h-6" /> : (

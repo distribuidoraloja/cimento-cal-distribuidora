@@ -1,75 +1,189 @@
+"use client"
+
+import { useEffect, useState } from "react"
 import Link from "next/link"
-import { MapPin, Phone, Mail, Globe } from "lucide-react"
+import { MapPin, Phone, Mail, Globe, Facebook, Instagram, Linkedin } from "lucide-react"
+import BrandLogo from "@/components/store/brand-logo"
+import { SITE } from "@/lib/site-config"
+import { createClient } from "@/lib/supabase/client"
+
+const supabase = createClient()
 
 export default function StoreFooter() {
+  const [categories, setCategories] = useState<{ id: string; name: string; slug: string }[]>([])
+
+  useEffect(() => {
+    supabase
+      .from("categories")
+      .select("id, name, slug")
+      .eq("active", true)
+      .order("sort_order")
+      .then(({ data }) => {
+        if (data) setCategories(data.slice(0, 8))
+      })
+  }, [])
+
   return (
-    <footer className="bg-secondary text-secondary-foreground">
-      <div className="max-w-7xl mx-auto px-4 py-12">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-          {/* Brand */}
-          <div>
-            <div className="flex items-center gap-2 mb-4">
-              <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center">
-                <span className="text-primary-foreground font-bold text-lg">A</span>
-              </div>
-              <div>
-                <p className="font-bold text-secondary-foreground text-sm">Atacado</p>
-                <p className="text-primary text-xs font-semibold">Cimento & Cal</p>
-              </div>
-            </div>
-            <p className="text-sm text-secondary-foreground/70 leading-relaxed">
-              Atacado de materiais de construcao com os melhores precos e atendimento.
+    <footer className="bg-secondary text-secondary-foreground border-t border-white/5">
+      <div className="max-w-7xl mx-auto px-4 py-14 lg:py-16">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-10 lg:gap-8">
+          <div className="lg:col-span-4 space-y-4">
+            <BrandLogo variant="compact" inverted className="mb-2" />
+            <p className="text-sm text-secondary-foreground/75 leading-relaxed max-w-sm">
+              {SITE.tagline}
             </p>
+            <div className="flex items-center gap-3 pt-2">
+              <a
+                href="https://facebook.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex h-10 w-10 items-center justify-center rounded-lg bg-white/5 text-secondary-foreground/80 hover:bg-primary hover:text-primary-foreground transition"
+                aria-label="Facebook"
+              >
+                <Facebook className="w-5 h-5" />
+              </a>
+              <a
+                href="https://instagram.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex h-10 w-10 items-center justify-center rounded-lg bg-white/5 text-secondary-foreground/80 hover:bg-primary hover:text-primary-foreground transition"
+                aria-label="Instagram"
+              >
+                <Instagram className="w-5 h-5" />
+              </a>
+              <a
+                href="https://linkedin.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex h-10 w-10 items-center justify-center rounded-lg bg-white/5 text-secondary-foreground/80 hover:bg-primary hover:text-primary-foreground transition"
+                aria-label="LinkedIn"
+              >
+                <Linkedin className="w-5 h-5" />
+              </a>
+            </div>
           </div>
 
-          {/* Atendimento */}
-          <div>
-            <h3 className="font-bold text-secondary-foreground mb-4">Atendimento</h3>
-            <ul className="space-y-2 text-sm text-secondary-foreground/70">
-              <li><Link href="/sobre" className="hover:text-primary transition">Sobre Nos</Link></li>
-              <li><Link href="/contato" className="hover:text-primary transition">Fale Conosco</Link></li>
-              <li><Link href="/rastrear" className="hover:text-primary transition">Rastrear Pedido</Link></li>
-              <li><Link href="/trocas" className="hover:text-primary transition">Trocas e Devolucoes</Link></li>
+          <div className="lg:col-span-2">
+            <h3 className="font-heading text-xs font-bold uppercase tracking-[0.2em] text-primary mb-4">
+              Institucional
+            </h3>
+            <ul className="space-y-2.5 text-sm text-secondary-foreground/75">
+              <li>
+                <Link href="/sobre-nos" className="hover:text-white transition">
+                  Sobre nós
+                </Link>
+              </li>
+              <li>
+                <Link href="/politica-de-privacidade" className="hover:text-white transition">
+                  Política de privacidade
+                </Link>
+              </li>
+              <li>
+                <Link href="/termos-de-uso" className="hover:text-white transition">
+                  Termos de uso
+                </Link>
+              </li>
             </ul>
           </div>
 
-          {/* Informacoes */}
-          <div>
-            <h3 className="font-bold text-secondary-foreground mb-4">Informacoes</h3>
-            <ul className="space-y-2 text-sm text-secondary-foreground/70">
-              <li><Link href="/privacidade" className="hover:text-primary transition">Politica de Privacidade</Link></li>
-              <li><Link href="/termos" className="hover:text-primary transition">Termos de Uso</Link></li>
-              <li><Link href="/frete" className="hover:text-primary transition">Politica de Frete</Link></li>
-              <li><Link href="/pagamento" className="hover:text-primary transition">Formas de Pagamento</Link></li>
+          <div className="lg:col-span-2">
+            <h3 className="font-heading text-xs font-bold uppercase tracking-[0.2em] text-primary mb-4">
+              Atendimento
+            </h3>
+            <ul className="space-y-2.5 text-sm text-secondary-foreground/75">
+              <li>
+                <Link href="/fale-conosco" className="hover:text-white transition">
+                  Fale conosco
+                </Link>
+              </li>
+              <li>
+                <Link href="/contato" className="hover:text-white transition">
+                  Contato
+                </Link>
+              </li>
+              <li>
+                <Link href="/rastrear-pedido" className="hover:text-white transition">
+                  Rastrear pedido
+                </Link>
+              </li>
+              <li>
+                <Link href="/trocas-e-devolucoes" className="hover:text-white transition">
+                  Trocas e devoluções
+                </Link>
+              </li>
+              <li>
+                <Link href="/politica-de-frete" className="hover:text-white transition">
+                  Política de frete
+                </Link>
+              </li>
+              <li>
+                <Link href="/formas-de-pagamento" className="hover:text-white transition">
+                  Formas de pagamento
+                </Link>
+              </li>
             </ul>
           </div>
 
-          {/* Contato */}
-          <div>
-            <h3 className="font-bold text-secondary-foreground mb-4">Contato</h3>
-            <ul className="space-y-3 text-sm text-secondary-foreground/70">
-              <li className="flex items-start gap-2">
-                <MapPin className="w-4 h-4 shrink-0 mt-0.5 text-primary" />
-                <span>Rua Igarapava, 73<br />Vila Albertina<br />Ribeirao Preto - SP<br />CEP: 14.075-453</span>
+          <div className="lg:col-span-2">
+            <h3 className="font-heading text-xs font-bold uppercase tracking-[0.2em] text-primary mb-4">
+              Categorias
+            </h3>
+            <ul className="space-y-2.5 text-sm text-secondary-foreground/75">
+              <li>
+                <Link href="/produtos" className="hover:text-white transition font-medium">
+                  Ver todo o catálogo
+                </Link>
+              </li>
+              {categories.map((c) => (
+                <li key={c.id}>
+                  <Link href={`/categoria/${c.slug}`} className="hover:text-white transition line-clamp-1">
+                    {c.name}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <div className="lg:col-span-2">
+            <h3 className="font-heading text-xs font-bold uppercase tracking-[0.2em] text-primary mb-4">
+              Contato
+            </h3>
+            <ul className="space-y-3 text-sm text-secondary-foreground/75">
+              <li className="flex gap-2.5">
+                <MapPin className="w-4 h-4 shrink-0 mt-0.5 text-primary" aria-hidden />
+                <span className="leading-snug">
+                  {SITE.address.street}
+                  <br />
+                  {SITE.address.district}, {SITE.address.city}
+                  <br />
+                  {SITE.address.zip}
+                </span>
               </li>
               <li className="flex items-center gap-2">
-                <Phone className="w-4 h-4 shrink-0 text-primary" />
-                <a href="tel:+5516996447972" className="hover:text-primary transition">(16) 9 9644-7972</a>
+                <Phone className="w-4 h-4 shrink-0 text-primary" aria-hidden />
+                <a href={`tel:+${SITE.whatsappE164}`} className="hover:text-white transition">
+                  {SITE.phoneDisplay}
+                </a>
               </li>
               <li className="flex items-center gap-2">
-                <Mail className="w-4 h-4 shrink-0 text-primary" />
-                <a href="mailto:contato@atacadodeconstrucao.com" className="hover:text-primary transition">contato@atacadodeconstrucao.com</a>
+                <Mail className="w-4 h-4 shrink-0 text-primary" aria-hidden />
+                <a href={`mailto:${SITE.email}`} className="hover:text-white transition break-all">
+                  {SITE.email}
+                </a>
               </li>
               <li className="flex items-center gap-2">
-                <Globe className="w-4 h-4 shrink-0 text-primary" />
-                <a href="https://www.atacadodeconstrucao.com" target="_blank" rel="noopener noreferrer" className="hover:text-primary transition">www.atacadodeconstrucao.com</a>
+                <Globe className="w-4 h-4 shrink-0 text-primary" aria-hidden />
+                <a href={SITE.website} target="_blank" rel="noopener noreferrer" className="hover:text-white transition break-all">
+                  {SITE.website.replace(/^https?:\/\//, "")}
+                </a>
               </li>
             </ul>
           </div>
         </div>
 
-        <div className="border-t border-secondary-foreground/10 mt-8 pt-8 text-center text-sm text-secondary-foreground/50">
-          <p>Atacado Cimento & Cal - Todos os direitos reservados.</p>
+        <div className="mt-12 pt-8 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-secondary-foreground/45">
+          <p>© {new Date().getFullYear()} {SITE.legalName}. Todos os direitos reservados.</p>
+          <p className="text-secondary-foreground/35">CNPJ e razão social conforme contrato social.</p>
         </div>
       </div>
     </footer>

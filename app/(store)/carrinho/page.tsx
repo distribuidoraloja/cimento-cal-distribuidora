@@ -3,7 +3,11 @@
 import { useState, useEffect } from "react"
 import Image from "next/image"
 import Link from "next/link"
-import { Trash2, Minus, Plus, ShoppingCart, ArrowLeft, Package } from "lucide-react"
+import { Trash2, Minus, Plus, ShoppingCart, ArrowLeft, Package, MessageCircle } from "lucide-react"
+import { createClient } from "@/lib/supabase/client"
+import { saveLocalOrder, generateOrderCode } from "@/lib/local-orders"
+import { waLink } from "@/lib/site-config"
+import { trackWhatsAppClick } from "@/lib/track-whatsapp"
 
 type CartItem = {
   id: string
@@ -42,6 +46,25 @@ export default function CartPage() {
 
   const total = cart.reduce((sum, i) => sum + i.price * i.qty, 0)
   const totalItems = cart.reduce((sum, i) => sum + i.qty, 0)
+
+  async function finalizeWhatsApp() {
+    const supabase = createClient()
+    const { data } = await supabase.auth.getUser()
+    const email = data.user?.email ?? undefined
+    const code = generateOrderCode()
+    const lines = cart.map((i) => `- ${i.name} (x${i.qty}) — R$ ${(i.price * i.qty).toFixed(2)}`)
+    const summary = lines.join("\n")
+    saveLocalOrder({
+      code,
+      email,
+      status: "received",
+      total,
+      itemsSummary: summary,
+    })
+    const msg = `Olá! Quero finalizar o pedido *${code}*:\n\n${summary}\n\n*Total:* R$ ${total.toFixed(2)}`
+    trackWhatsAppClick("checkout_finalize", "/carrinho")
+    window.open(waLink(msg), "_blank", "noopener,noreferrer")
+  }
 
   if (cart.length === 0) {
     return (
@@ -103,16 +126,17 @@ export default function CartPage() {
               <span className="font-bold text-primary text-xl">R$ {total.toFixed(2)}</span>
             </div>
           </div>
-          <a
-            href={`https://wa.me/5516996447972?text=${encodeURIComponent(
-              `Ola! Gostaria de finalizar meu pedido:\n\n${cart.map((i) => `- ${i.name} (x${i.qty}) - R$ ${(i.price * i.qty).toFixed(2)}`).join("\n")}\n\nTotal: R$ ${total.toFixed(2)}`
-            )}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="block w-full text-center py-3 bg-[#25d366] text-white rounded-lg font-semibold hover:bg-[#20c15c] transition mb-3"
+          <button
+            type="button"
+            onClick={() => void finalizeWhatsApp()}
+            className="flex w-full items-center justify-center gap-2 py-3.5 bg-[#25d366] text-white rounded-xl font-semibold hover:bg-[#20c15c] transition mb-3 shadow-md shadow-[#25d366]/20"
           >
+            <MessageCircle className="w-5 h-5 shrink-0" aria-hidden />
             Finalizar via WhatsApp
-          </a>
+          </button>
+          <p className="text-[11px] text-muted-foreground text-center mb-3 leading-snug">
+            Um código de pedido será gerado para você acompanhar em &quot;Minha conta&quot; e em &quot;Rastrear pedido&quot;.
+          </p>
           <Link href="/" className="block w-full text-center py-3 bg-muted text-muted-foreground rounded-lg font-medium hover:bg-muted/80 transition">
             Continuar Comprando
           </Link>
